@@ -38,6 +38,6 @@ app.post("/twilio/indicator", async function (request, response) {
 })
 
 
-app.listen(3000, function () {
+app.listen(2202, function () {
     console.log("Application started on port %d", 2202)
 })
