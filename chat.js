@@ -33,4 +33,15 @@ function getToken(identity) {
     return token.toJwt();
 }
 
-module.exports = {getToken};
+async function enableIndicator(isEnabled) {
+    const client = twilio(accountSid, authToken);
+    const response = await client.chat.v2.services(serviceSid)
+        .update({ reachabilityEnabled: isEnabled })
+
+    return response;
+}
+
+module.exports = {
+    getToken,
+    enableIndicator
+};
