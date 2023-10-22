@@ -21,20 +21,11 @@ app.get("/healthcheck", function (request, response) {
     response.send("Server Running")
 })
 
-app.get("/twilio/token/:userName", function (request, response) {
-    let userName = request.params.userName
-    let token = chat.getToken(userName)
+app.get("/twilio/token", function (request, response) {
+    const { userName, os } = request.query
+    let token = chat.getToken(userName, os)
     console.log(`🚀 ~ [Username]: ${userName} ----- [Token]: ${token}`)
     response.send(JSON.stringify(token))
-})
-
-app.post("/twilio/indicator", async function (request, response) {
-    const { isEnabled } = request.body
-    const res = await chat.enableIndicator(isEnabled)
-    response.status(200).json({
-        data: res,
-        message: `Reachability Indicator status: ${res.reachabilityEnabled}`
-    })
 })
 
 

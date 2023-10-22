@@ -7,12 +7,14 @@ const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceSid = process.env.TWILIO_CHAT_SERVICE_SID;
 const apiKey = process.env.TWILIO_API_KEY;
 const apiSecret = process.env.TWILIO_API_SECRET;
-const pushCredentialSid = process.env.TWILIO_PUSH_CREDENTIAL_SID;
+const fcmPushCredentialSid = process.env.TWILIO_FCM_PUSH_CREDENTIAL_SID;
+const apnPushCredentialSid = process.env.TWILIO_APN_PUSH_CREDENTIAL_SID;
 
-function getToken(identity) {
+function getToken(identity, os) {
     const AccessToken = twilio.jwt.AccessToken;
-    console.log(' identity ------', identity);
+    console.log(' identity ------', identity, os);
     const ChatGrant = AccessToken.ChatGrant;
+    const pushCredentialSid = os === 'android' ? fcmPushCredentialSid : apnPushCredentialSid;
 
     const chatGrant = new ChatGrant({
         serviceSid: serviceSid,
@@ -32,15 +34,6 @@ function getToken(identity) {
     return token.toJwt();
 }
 
-async function enableIndicator(isEnabled) {
-    const client = twilio(accountSid, authToken);
-    const response = await client.chat.v2.services(serviceSid)
-        .update({ reachabilityEnabled: isEnabled })
-
-    return response;
-}
-
 module.exports = {
-    getToken,
-    enableIndicator
+    getToken
 };
