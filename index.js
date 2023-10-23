@@ -4,13 +4,14 @@ const app = express()
 const bodyParser = require('body-parser')
 
 const chat = require('./chat')
+const call = require('./call')
 
 app.use(function(req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-    res.setHeader('Access-Control-Allow-Credentials', true)
-    next()
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  next()
 })
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -18,14 +19,21 @@ app.disable('x-powered-by');
 app.disable('etag');
 
 app.get("/healthcheck", function (request, response) {
-    response.send("Server Running")
+  response.send("Server Running")
 })
 
-app.get("/twilio/token", function (request, response) {
-    const { userName, os } = request.query
-    let token = chat.getToken(userName, os)
-    console.log(`🚀 ~ [Username]: ${userName} ----- [Token]: ${token}`)
+app.get("/twilio/:tokenType/token", function (request, response) {
+  const { tokenType } = request.params
+  const { userName, os } = request.query
+  if (tokenType === 'chat') {
+    const token = chat.getToken(userName, os)
+    console.log(`🚀 ~ [Username]: ${userName} -- [Type]: ${tokenType} -- [Token]: ${token}`)
     response.send(JSON.stringify(token))
+  } else {
+    const token = call.getToken(userName, os)
+    console.log(`🚀 ~ [Username]: ${userName} -- [Type]: ${tokenType} -- [Token]: ${token}`)
+    response.send(JSON.stringify(token))
+  }
 })
 
 

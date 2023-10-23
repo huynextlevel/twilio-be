@@ -12,10 +12,10 @@ const apnPushCredentialSid = process.env.TWILIO_APN_PUSH_CREDENTIAL_SID;
 function getToken(identity, os) {
     const AccessToken = twilio.jwt.AccessToken;
     console.log(' identity ------', identity, os);
-    const ChatGrant = AccessToken.ChatGrant;
+    const VoiceGrant = AccessToken.VoiceGrant;
     const pushCredentialSid = os === 'android' ? fcmPushCredentialSid : apnPushCredentialSid;
 
-    const chatGrant = new ChatGrant({
+    const voiceGrant = new VoiceGrant({
         serviceSid: serviceSid,
         pushCredentialSid: pushCredentialSid
     });
@@ -29,7 +29,7 @@ function getToken(identity, os) {
         }
     );
 
-    token.addGrant(chatGrant); 
+    token.addGrant(voiceGrant); 
     return token.toJwt();
 }
 
