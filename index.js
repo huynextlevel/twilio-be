@@ -36,6 +36,12 @@ app.get("/twilio/:tokenType/token", function (request, response) {
   }
 })
 
+app.post("/twilio/make-call", function (request, response) {
+  const { to, from } = request.body
+  const callResponse = call.makeCall(to, from)
+  response.send(JSON.stringify(callResponse))
+})
+
 
 app.listen(2202, function () {
     console.log("Application started on port %d", 2202)
