@@ -27,12 +27,12 @@ app.get("/twilio/:tokenType/token", function (request, response) {
   const { userName, os } = request.query
   if (tokenType === 'chat') {
     const token = chat.getToken(userName, os)
-    console.log(`🚀 ~ [Username]: ${userName} -- [Type]: ${tokenType} -- [Token]: ${token}`)
+    console.log(`🚀 ~ [Username]: ${userName} -- [OS]: ${os} -- [Type]: ${tokenType} -- [Token]: ${token}`)
     response.send(JSON.stringify(token))
   } else {
     const token = call.getToken(userName, os)
-    console.log(`🚀 ~ [Username]: ${userName} -- [Type]: ${tokenType} -- [Token]: ${token}`)
-    response.send(JSON.stringify(token))
+    console.log(`🚀 ~ [Username]: ${userName} -- [OS]: ${os} -- [Type]: ${tokenType} -- [Token]: ${token}`)
+    response.send(token)
   }
 })
 
