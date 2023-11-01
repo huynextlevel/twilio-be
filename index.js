@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 
 const chat = require('./chat')
 const call = require('./call')
+const video = require('./video')
 
 app.use(function(req, res, next) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -24,11 +25,15 @@ app.get("/healthcheck", function (request, response) {
 
 app.get("/twilio/:tokenType/token", function (request, response) {
   const { tokenType } = request.params
-  const { userName, os } = request.query
+  const { userName, os, roomName } = request.query
   if (tokenType === 'chat') {
     const token = chat.getToken(userName, os)
     console.log(`🚀 ~ [Username]: ${userName} -- [OS]: ${os} -- [Type]: ${tokenType} -- [Token]: ${token}`)
     response.send(JSON.stringify(token))
+  } else if (tokenType === 'video') {
+    const token = video.getToken(roomName, userName)
+    console.log(`🚀 ~ [Username]: ${userName} -- [Room]: ${roomName} -- [Type]: ${tokenType} -- [Token]: ${token}`)
+    response.send(token)
   } else {
     const token = call.getToken(userName, os)
     console.log(`🚀 ~ [Username]: ${userName} -- [OS]: ${os} -- [Type]: ${tokenType} -- [Token]: ${token}`)
@@ -42,6 +47,12 @@ app.post("/twilio/make-call", function (request, response) {
   response.send(JSON.stringify(callResponse))
 })
 
+app.post("/twilio/chat/pre-webhook", async function (request, response) {
+  console.log('🚀 ~ file: index.js:51 ~ request:', request.body)
+  const { ChannelSid, From, Body, Attributes } = request.body
+  await chat.sendTwilioMessage(ChannelSid, Body, From, Attributes)
+  response.status(200).send({ message: 'success' })
+})
 
 app.listen(2202, function () {
     console.log("Application started on port %d", 2202)
